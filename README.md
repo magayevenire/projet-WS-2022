@@ -11,7 +11,7 @@
 ### Installations des dépendances
 
     (*) => sous windows remplacer python par py  
-1. Naviger dans le repertoire
+1. Naviguer dans le repertoire
 
 2. `python -m pip install virtualenv` (*) 
 
