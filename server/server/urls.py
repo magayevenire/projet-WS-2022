@@ -30,8 +30,10 @@ router.register('bureau',BureauViewSet,basename='bureau')
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path("",include(router.urls)),  
+    path('admin/', admin.site.urls),
+    path('api/auth/', include('djoser.urls')),
+    path('api/auth/', include('djoser.urls.authtoken')),
 ]
 
 
