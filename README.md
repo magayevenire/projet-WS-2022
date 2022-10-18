@@ -18,16 +18,16 @@
 3. `python -m venv env` (*)
 
 4. Activer l'environnement virtuel
-    - `env\Scripts\activate.bat` (Windows)
-    - `source env\bin\activate` (Linux)
+    `env\Scripts\activate.bat` (Windows)
+    `source env\bin\activate` (Linux)
 
 5. `pip install -r requirements.txt`
 
 ### initialiser la base de donnée (seulment la première fois
-    - `python manage.py makemigrations `
-    - `python manage.py migrate `
+    python manage.py makemigrations 
+    python manage.py migrate `
 ### lancer le serveur 
--   `python manage.py runserver`
+    python manage.py runserver
 
 
 ### admin 
