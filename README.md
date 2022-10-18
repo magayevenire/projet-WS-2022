@@ -26,15 +26,17 @@
 ### initialiser la base de donnée (seulment la première fois
     python manage.py makemigrations 
     python manage.py migrate `
+
+### admin 
+    python manage.py createsuperuser
+
+- username : admin
+- password : passer123
+
 ### lancer le serveur 
     python manage.py runserver
 
 
-### admin 
-- `python manage.py createsuperuser`
-
-- username : admin
-- password : passer123
 
 
 
