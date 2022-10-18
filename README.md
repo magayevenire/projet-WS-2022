@@ -29,8 +29,9 @@
 ### lancer le serveur 
 -   `python manage.py runserver`
 
-# admin 
-link : http://127.0.0.1:8000/admin 
+
+### admin 
+- `python manage.py createsuperuser`
 
 - username : admin
 - password : passer123
