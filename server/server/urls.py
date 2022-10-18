@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path,include
 from rest_framework.routers import DefaultRouter
 
-from circonscriptions.views import RegionViewSet, DepartementViewSet , CommuneViewSet, BureauViewSet
+from circonscriptions.views import RegionViewSet, DepartementViewSet , CommuneViewSet, BureauViewSet ,add_circonscriptions
 
 
 
@@ -31,6 +31,7 @@ router.register('bureau',BureauViewSet,basename='bureau')
 
 urlpatterns = [
     path("",include(router.urls)),  
+    path("add_circonscriptions",add_circonscriptions),  
     path('admin/', admin.site.urls),
     path('api/auth/', include('djoser.urls')),
     path('api/auth/', include('djoser.urls.authtoken')),
