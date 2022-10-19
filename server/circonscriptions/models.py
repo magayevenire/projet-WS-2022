@@ -38,7 +38,8 @@ class Commune(Circonscription):
     #     unique_together = ('nom', 'departement',)
     @property
     def nombre_inscrits(self):
-        return self.bureaux.aggregate(Sum('nombre_inscrits'))
+        print(self.bureaux.aggregate)
+        return "self.bureaux.aggregate(Sum('nombre_inscrits'))"
 
     def __str__(self):
         return f"{self.nom} -  {self.departement}"

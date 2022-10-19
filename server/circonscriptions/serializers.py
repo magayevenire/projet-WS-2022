@@ -22,11 +22,11 @@ class CommuneSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Commune 
-        fields = ('id','departement','nom')
+        fields = ('id','departement','nom','nombre_inscrits')
 
 class BureauSerializer(serializers.ModelSerializer):
     commune = CommuneSerializer(many=False,read_only=True,)
     class Meta:
         model = Bureau 
-        fields = ('id','commune','numero')
+        fields = ('id','commune','numero','nombre_inscrits')
 
