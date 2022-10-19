@@ -18,8 +18,8 @@ from django.urls import path,include
 from rest_framework.routers import DefaultRouter
 
 from circonscriptions.views import RegionViewSet, DepartementViewSet , CommuneViewSet, BureauViewSet ,add_circonscriptions
-
-
+from electeurs.views import ElecteurViewSet , CandidatureViewSet ,VoteViewSet,ElecteurVoteViewSet
+from elections.views import ElectionViewSet
 
 
 router = DefaultRouter()
@@ -27,6 +27,11 @@ router.register('region',RegionViewSet,basename='region')
 router.register('departement',DepartementViewSet,basename='departement')
 router.register('commune',CommuneViewSet,basename='commune')
 router.register('bureau',BureauViewSet,basename='bureau')
+router.register('electeur',ElecteurViewSet,basename='electeur')
+router.register('canditature',CandidatureViewSet,basename='canditature')
+router.register('vote',VoteViewSet,basename='vote')
+router.register('electeur-vote',ElecteurVoteViewSet,basename='electeur-vote')
+router.register('election',ElectionViewSet,basename='election')
 
 
 urlpatterns = [
