@@ -18,7 +18,7 @@ from django.urls import path,include
 from rest_framework.routers import DefaultRouter
 
 from circonscriptions.views import RegionViewSet, DepartementViewSet , CommuneViewSet, BureauViewSet ,add_circonscriptions
-from electeurs.views import ElecteurViewSet , CandidatureViewSet ,VoteViewSet,ElecteurVoteViewSet
+from electeurs.views import ElecteurViewSet , CandidatureViewSet ,VoteViewSet,ElecteurVoteViewSet ,UserViewSet
 from elections.views import ElectionViewSet
 
 
@@ -32,12 +32,15 @@ router.register('canditature',CandidatureViewSet,basename='canditature')
 router.register('vote',VoteViewSet,basename='vote')
 router.register('electeur-vote',ElecteurVoteViewSet,basename='electeur-vote')
 router.register('election',ElectionViewSet,basename='election')
+router.register('user',UserViewSet,basename='user')
 
 
 urlpatterns = [
-    path("",include(router.urls)),  
+    path("api/",include(router.urls)),  
     path("add_circonscriptions",add_circonscriptions),  
     path('admin/', admin.site.urls),
+    # path('', admin.site.urls),
+    path('', include(router.urls)),
     path('api/auth/', include('djoser.urls')),
     path('api/auth/', include('djoser.urls.authtoken')),
 ]

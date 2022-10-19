@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
  
 
 class Electeur(models.Model):
-    user = models.OneToOneField(User,on_delete=models.CASCADE,default=None,null=True,blank=True) 
+    user = models.OneToOneField(User,related_name='electeur',on_delete=models.CASCADE,default=None,null=True,blank=True) 
 
     numero_cni = models.CharField(max_length=50,null=True,blank=True)
     nom = models.CharField(max_length=50,null=True,blank=True)
@@ -32,7 +32,7 @@ class Electeur(models.Model):
 
 class Candidature(models.Model):
 
-    electeur= models.ForeignKey(Electeur,related_name='canditatues', on_delete=models.CASCADE,null=True,blank=True)
+    electeur= models.ForeignKey(Electeur,related_name='candidatures', on_delete=models.CASCADE,null=True,blank=True)
     elections= models.ForeignKey("elections.election", on_delete=models.CASCADE,null=True,blank=True)
     nom_parti = models.CharField(max_length=50,null=True,blank=True)
 
@@ -44,10 +44,9 @@ class Candidature(models.Model):
 class ElecteurVote(models.Model):
 
     # electeur = models.ForeignKey(Electeur,related_name='canditatues', on_delete=models.CASCADE,null=True,blank=True)
-    eleteur = models.ForeignKey(Electeur, on_delete=models.CASCADE,null=True,blank=True)
+    eleteur = models.ForeignKey(Electeur,related_name='votes', on_delete=models.CASCADE,null=True,blank=True)
     election = models.ForeignKey("elections.election", on_delete=models.CASCADE,null=True,blank=True)
 
-    a_voter= models.BooleanField(default=False)
 
     creation = models.DateTimeField(auto_now_add=True)
     modifier = models.DateTimeField(auto_now=True)
