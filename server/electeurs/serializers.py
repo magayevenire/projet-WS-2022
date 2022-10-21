@@ -1,20 +1,16 @@
 from rest_framework import serializers
 from .models import Electeur ,Candidature , Vote ,ElecteurVote
 from django.contrib.auth.models import User
-
-class UserSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = ('id','email',)
+from django.contrib.auth.hashers import make_password
 
 
-class ElecteurSerializer(serializers.ModelSerializer):
-    user = UserSerializer(many=False,read_only=True,)
-    class Meta:
-        model = Electeur
-        fields = ("id","user","numero_cni","nom","prenom","date_naissance","Adresse","bureau_vote")
-        
+
+# class UserSerializer(serializers.ModelSerializer):
+
+#     class Meta:
+#         model = User
+#         fields = ('__all__')
+
 
 
 class CandidatureSerializer(serializers.ModelSerializer):
@@ -32,4 +28,23 @@ class ElecteurVoteSerializer(serializers.ModelSerializer):
         model = ElecteurVote
         fields = ("__all__")
         
-  
+
+class ElecteurSerializer(serializers.ModelSerializer):
+    # candidatures = CandidatureSerializer(many=True,read_only=True)
+    # votes = ElecteurVoteSerializer(many=True,read_only=True)
+
+    class Meta:
+        model = Electeur
+        fields = ("id","numero_cni","nom","prenom","date_naissance","Adresse","bureau_vote","candidatures","votes")
+        
+
+
+
+class UserSerializer(serializers.ModelSerializer):
+    electeur = ElecteurSerializer(many=False,read_only=True)
+
+
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email','electeur')
