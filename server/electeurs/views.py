@@ -12,6 +12,9 @@ from django.contrib.auth.models import User
 class UserViewSet(viewsets.ModelViewSet):
     serializer_class =UserSerializer
     queryset = User.objects.all()
+    def get_queryset(self):
+        return self.queryset.filter(pk=self.request.user.id)
+
 class ElecteurViewSet(viewsets.ModelViewSet):
     serializer_class =ElecteurSerializer
     queryset = Electeur.objects.all()
