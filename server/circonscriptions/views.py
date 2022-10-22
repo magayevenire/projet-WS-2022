@@ -11,18 +11,44 @@ class RegionViewSet(viewsets.ModelViewSet):
     serializer_class =RegionSerializer
     queryset = Region.objects.all()
 
+
+
+
 class DepartementViewSet(viewsets.ModelViewSet):
     serializer_class =DepartementSerializer
     queryset = Departement.objects.all()
 
+    def get_queryset(self):
+        r= self.request.query_params.get('region')
+        if r is not None:
+
+            return self.queryset.filter(region=r)
+        else:
+            return self.queryset
 class CommuneViewSet(viewsets.ModelViewSet):
     serializer_class =CommuneSerializer
     queryset = Commune.objects.all()
+
+    def get_queryset(self):
+        d= self.request.query_params.get('departement')
+        if d is not None:
+
+            return self.queryset.filter(departement=d)
+        else:
+            return self.queryset
 
 
 class BureauViewSet(viewsets.ModelViewSet):
     serializer_class =BureauSerializer
     queryset = Bureau.objects.all()
+
+    def get_queryset(self):
+        c= self.request.query_params.get('commune')
+        if c is not None:
+
+            return self.queryset.filter(commune=c)
+        else:
+            return self.queryset
 
 @api_view(['POST'])
 def add_circonscriptions(request):
