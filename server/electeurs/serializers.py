@@ -1,7 +1,6 @@
 from rest_framework import serializers
-from .models import Electeur ,Candidature , Vote ,ElecteurVote
+from .models import Electeur ,Candidature , Vote 
 from django.contrib.auth.models import User
-from django.contrib.auth.hashers import make_password
 
 
 
@@ -23,10 +22,7 @@ class VoteSerializer(serializers.ModelSerializer):
         model = Vote
         fields = ("__all__")
         
-class ElecteurVoteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ElecteurVote
-        fields = ("__all__")
+
         
 
 class ElecteurSerializer(serializers.ModelSerializer):
