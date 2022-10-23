@@ -25,7 +25,7 @@ class ElectionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Election
-        fields = ("periode_inscription_debut",
+        fields = ("id","periode_inscription_debut",
         "nom",
         "periode_inscription_fin",
         "periode_depot_canditature_debut",
