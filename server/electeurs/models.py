@@ -32,8 +32,8 @@ class Electeur(models.Model):
 
 class Candidature(models.Model):
 
-    electeur= models.ForeignKey(Electeur,related_name='candidatures', on_delete=models.CASCADE,null=True,blank=True)
-    elections= models.ForeignKey("elections.election", on_delete=models.CASCADE,null=True,blank=True)
+    candidat= models.ForeignKey(Electeur,related_name='candidatures', on_delete=models.CASCADE,null=True,blank=True)
+    election= models.ForeignKey("elections.election",related_name='candidats',on_delete=models.CASCADE,null=True,blank=True)
     nom_parti = models.CharField(max_length=50,null=True,blank=True)
 
     creation = models.DateTimeField(auto_now_add=True)
