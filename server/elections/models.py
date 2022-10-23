@@ -13,3 +13,6 @@ class Election(models.Model):
     jour_vote =  models.DateField(null=True,blank=True)
     creation = models.DateTimeField(auto_now_add=True)
     modifier = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.nom} - {self.jour_vote}"
