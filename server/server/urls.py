@@ -28,16 +28,18 @@ router.register('departement',DepartementViewSet,basename='departement')
 router.register('commune',CommuneViewSet,basename='commune')
 router.register('bureau',BureauViewSet,basename='bureau')
 router.register('electeur',ElecteurViewSet,basename='electeur')
-router.register('canditature',CandidatureViewSet,basename='canditature')
+router.register('candidature',CandidatureViewSet,basename='candidature')
 router.register('vote',VoteViewSet,basename='vote')
 # router.register('electeur-vote',ElecteurVoteViewSet,basename='electeur-vote')
 router.register('election',ElectionViewSet,basename='election')
 router.register('user',UserViewSet,basename='user')
+router.register('add_circonscriptions',add_circonscriptions,basename='add_circonscriptions')
+# app_router.register("auth or whatever you prefer (avoid trailing slashes)", users_viewsets.UsersViewSet, basename="auth")
 
 
 urlpatterns = [
     path("api/",include(router.urls)),  
-    path("add_circonscriptions",add_circonscriptions),  
+    # path("add_circonscriptions",add_circonscriptions),  
     path('admin/', admin.site.urls),
     # path('', admin.site.urls),
     path('', include(router.urls)),

@@ -43,6 +43,16 @@ class Candidature(models.Model):
     creation = models.DateTimeField(auto_now_add=True)
     modifier = models.DateTimeField(auto_now=True)
 
+    @property
+    def votes(self):
+        return self.vote.count()
+
+    @property
+    def pourcentage(self):
+      
+        print(self.election.candidats)
+        return "self.election.candidats.votes.count()"
+
     def __str__(self):
         return f"{self.nom_parti} -  {self.candidat.prenom} -  {self.candidat.nom}"
 
@@ -53,7 +63,7 @@ class Vote(models.Model):
 
     electeur = models.ForeignKey(Electeur,related_name='votes', on_delete=models.CASCADE)
     bureau_vote = models.ForeignKey("circonscriptions.Bureau",related_name='suffrages', on_delete=models.CASCADE)
-    candidature = models.ForeignKey(Candidature, on_delete=models.CASCADE)
+    candidature = models.ForeignKey(Candidature,related_name='vote', on_delete=models.CASCADE)
     creation = models.DateTimeField(auto_now_add=True)
     modifier = models.DateTimeField(auto_now=True)
 
