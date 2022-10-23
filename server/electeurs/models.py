@@ -15,7 +15,7 @@ class Electeur(models.Model):
     nom = models.CharField(max_length=50,null=True,blank=True)
     prenom = models.CharField(max_length=50,null=True,blank=True)
     date_naissance =  models.DateField(null=True,blank=True)
-    Adresse = models.CharField(max_length=250,null=True,blank=True)
+    adresse = models.CharField(max_length=250,null=True,blank=True)
     # nom_centre_vote = models.CharField(max_length=50,null=True,blank=True)
     bureau_vote = models.ForeignKey("circonscriptions.Bureau",related_name='inscrits', on_delete=models.SET_NULL,null=True,blank=True)
 

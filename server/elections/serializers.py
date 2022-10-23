@@ -7,7 +7,7 @@ class ElecteurSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Electeur
-        fields = ("id","numero_cni","nom","prenom","date_naissance","Adresse")
+        fields = ("id","numero_cni","nom","prenom","date_naissance","adresse")
 
 
 class CandidatureSerializer(serializers.ModelSerializer):
