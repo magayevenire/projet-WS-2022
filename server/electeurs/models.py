@@ -63,7 +63,7 @@ class Vote(models.Model):
 
     # electeur = models.ForeignKey(Electeur,related_name='canditatues', on_delete=models.CASCADE,null=True,blank=True)
     bureau_vote = models.ForeignKey("circonscriptions.Bureau",related_name='votes', on_delete=models.SET_NULL,null=True,blank=True)
-    canditaure = models.ForeignKey(Candidature, on_delete=models.CASCADE,null=True,blank=True)
+    canditure = models.ForeignKey(Candidature, on_delete=models.CASCADE,null=True,blank=True)
     creation = models.DateTimeField(auto_now_add=True)
     modifier = models.DateTimeField(auto_now=True)
 
