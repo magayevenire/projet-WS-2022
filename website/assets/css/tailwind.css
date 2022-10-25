@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply font-inter;
+  }
+  h1 {
+    @apply md:text-5xl text-4xl font-bold my-2 p-1 block;
+  }
+  h2 {
+    @apply md:text-3xl text-2xl font-bold my-2 p-1 block;
+  }
+  h3 {
+    @apply md:text-xl text-lg font-bold my-2 p-1 block;
+  }
+
+  section {
+    @apply p-2 m-0;
+  }
+
+  select {
+    @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+  }
+
+  input {
+    @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+  }
+
+  textarea {
+    @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+  }
+
+  label {
+    @apply block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300;
+  }
+
+  button {
+    @apply bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 hover:bg-gray-200 shadow-md ease-in duration-75 mb-1;
+  }
+
+  ol {
+    @apply list-decimal;
+  }
+  
+  ul {
+    @apply list-disc;
+  }
+
+  a {
+    @apply text-blue-600 hover:underline;
+  }
+}
+
+@layer components {
+  .header-item {
+    @apply block py-1 px-3 hover:no-underline text-white rounded bg-gray-700 hover:bg-gray-900 hover:text-gray-50 dark:text-white m-1 hover:scale-105 duration-75;
+  }
+  .button-primary {
+    @apply w-full my-1 bg-blue-500 hover:bg-blue-600 text-white border-blue-300;
+  }
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/Inter.ttf");
+}

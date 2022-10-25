@@ -1,0 +1,1 @@
+export default defineEventHandler(() => '<h1>Hello World!</h1>')
