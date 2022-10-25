@@ -1,0 +1,35 @@
+{% extends "auth/base.html" %}
+{% load static %}
+{% block container %}
+<div class="container-fluid">
+    <div class="">
+        <div class="card shadow  bg-white rounded">
+            <div class="card-header">
+                <h3>Mots de passe oublié</h3>
+            </div>
+            <div class="card-body">
+                {% if envoi %}
+                <p style="color:green;">mail envoyé !</p>
+                {% else %}
+                <form action="/auth/forgot" method="post">{% csrf_token %}
+                    <div class="input-group form-group" id="inForm">
+                        <input type="text" class="form-control" name="email" placeholder="Email">
+                    </div>
+
+                    <div class="form-group">
+                        <input type="submit" value="Envoyer" class="form-control">
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-center links">
+                    <a href="/auth/signin" >Se connecter</a>
+                </div>
+            </div>
+        </div>
+    </div>     
+</div>
+   
+
+{% endblock %}
