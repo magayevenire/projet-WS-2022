@@ -95,7 +95,7 @@ class ElectionViewSet(viewsets.ModelViewSet):
             return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True)
-    def gobal(self, request,pk=None):
+    def total(self, request,pk=None):
         
         election = self.queryset.get(pk=pk)
         votes = Vote.objects.filter(candidature__election=election)
