@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { IRegion } from "~~/types/IRegion"
+const conf = useRuntimeConfig()
 const map = [
   {
     d: "M356.5 560.2l-0.4 7.3-1.5 6.3-1.9 6.4 1 5.8 5.7 4 7.6 1.4 2.4 3.9 3.3 8.8 0.5 5.4 0.5 3.9 5.2 3.4 5.7 3.9-0.5 4.4 0.5 5.9 3.3 3.9 2.9 4.9 0 13.7-2.4 5.3-1.4 4.9 1.3 10.2-7.9 0-4.7 0.7-4.2 1.9-9.4 6.8-9.9 4.6-9 6.7-40.9 19.2-5.6 1.2-28-1.7-0.7-1-5-7.4-1.6-3.6-3-4.3-2.3-4.9-0.4-4.4 0.1-1 2.6 2.1 1.3 1.5 1.9 0.4 10.4 0.1 1 0.8 2.1 2.2 0.8 0.4 1.4-0.2 4.1-1 1.9-1.2 1.8-2.2 2.3-1.3 3.4 1.5 0.9-0.8 1-0.5 1 0 2.3 1.6 1.7-0.5 0.9 0.2 1.3 1.5 1.1 2.8 0.9 1.3 1 0.9 1.2 0.7 1.4 0.5 2 0 1.8-0.4 7.4-3 3-3.1 5-6.5 1.8-1.3 1.7-0.9 1.2-1.2 0.4-2.2-0.9-1.1-1.8-0.7-1-0.9 1.4-1.4-1.6-3.7-1.5-5.1-0.5-5.2 1.4-4.1 1.9-1.2 2.3-0.1 2.4 0.3 2.2-0.3 2.3-1 1.5-1.2 1.1-1.5 0.7-2 3.3 3.3 3.1 0.9 2-1.8 0.4-4.6-2.5 2.6-2.4-0.1-2.4-1-2.6-0.4-2.5 1.1-4 3-2.9 0.6-1.6 0-2.5 0.3-2.2 1.2-0.9 2.4 0 9.7 1.8 6.2 0.3 1.7 0.1 2.7-0.1 1.4-0.5 1.1-3.9 3.4-1.3 1.6-8.1 7.5-2.2 1.3-1.9 0.1-1.7-0.7-1.4-1.2 0.9-5-4.9-2.3-11.5-1.8-7.8 5-2.9 0.7-1.3-1.7-1.1-1.2-2-0.6-1.9 0.4-2.8 1.6-1.9 0.3-1.9-0.5-2.5-1.3-4-2.7-0.2-0.8 0.3-2.3-0.6-0.4-2.2-0.3-1.8-0.8-1-1.3-2.2-4.4-2-1.5-0.6-3.5-0.9-1.9-0.2-1.5 0.3-2.3 0.7-1.5 1.4-10.3 0.3-1 0.9-1.1 1.7-1.6 0.7-2 0.3-3.5 0.5-1.7-0.8-2.8-0.2-1.8 0.2-1.9 7.3-11.7 6.5-13.6 0-1.2-0.9-1.2-2.3-0.9-1.1-0.6-0.2-1.4 0.8-2 2.8-3.1 1.5-2.6 10.4 0 1.1-0.8 0.3-11.8 0.4-14.4 0.6-2.4 1.9-1 11.3-1.1 7.3-2.4 2 0 10.9 1.1 2.7-0.3 4.9-1.7 3.7-2 3.8-1.4 5 0.2 17.7 3.8 6 0z",
@@ -87,67 +89,84 @@ const map = [
 ];
 
 
-let listRegions = ref([])
+let selectedRegion = ref<IRegion>(null)
+let regions = ref<IRegion[]>([])
 // lifecycle hooks
 onMounted(async () => {
-  const {data, error} = await useFetch<[]>(`${useRuntimeConfig().public.DJANGO_API_BASE}/region`, {
+  const bureauxRes = await useFetch<[]>(`${conf.public.DJANGO_API_BASE}/bureau`, {
+    method: "get"
+  })
+  const { data, error } = await useFetch<IRegion[]>(`${conf.public.DJANGO_API_BASE}/region`, {
     method: "get"
   })
 
-  listRegions.value = data.value
-  console.log(listRegions, "list regions", error)
-  let regions = document.getElementsByClassName("region");
-  for (let i = 0; i < regions.length; i++) {
-    const region = regions[i];
-    region.addEventListener('click', function(e){
+  regions.value = data.value
+  console.log(regions, bureauxRes, "list regions", error)
+
+
+  let regionsDOM = document.getElementsByClassName("region");
+  for (let i = 0; i < regionsDOM.length; i++) {
+    const region = regionsDOM[i];
+
+    region.addEventListener('click', function (e) {
       let selected = document.getElementsByClassName("region selected")
-      if(selected && selected[0]) selected[0].classList.remove('selected')
-      console.log(`clicked on:`, this.dataset)
+      if (selected && selected[0]) selected[0].classList.remove('selected')
       this.classList.add('selected')
+      handleRegionClick(this)
+    })
+
+    region.addEventListener('mouseover', function(e){
+      handleRegionHover(this)
     })
   }
 });
+
+const hoveredRegion = ref<IRegion>(null)
+function handleRegionHover(region: HTMLElement) {
+  hoveredRegion.value = regions.value.find(reg => reg.nom == region.dataset.regionName)
+}
+
+function handleRegionClick(region: HTMLElement) {
+  selectedRegion.value = regions.value.find(reg => reg.nom == region.dataset.regionName)
+  console.log('clicked on:', regions, selectedRegion)
+}
 </script>
 
 <template>
   <div class="grid gap-6 w-3/4 mx-auto items-center justify-center">
     <main>
-      <ContentDoc class="text-gray-500">
-        <template #empty>
-          <small>Pas de contenu pour le moment ...</small>
-        </template>
-      </ContentDoc>
+      <!-- <ul>
+        <li v-for="region in regions" :key="region.id" >{{region.nom}}</li>
+      </ul> -->
+      <aside>
+        <ContentDoc class="text-gray-500">
+          <template #empty>
+            <small>Pas de contenu pour le moment ...</small>
+          </template>
+        </ContentDoc>
+      </aside>
     </main>
 
-    <div class="">
-      <svg
-        baseprofile="tiny"
-        fill="#7c7c7c"
-        height="737"
-        stroke="#ffffff"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        version="1.2"
-        width="500"
-        viewbox="0 0 1000 737"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          v-for="region in map"
-          :key="region.id"
-          v-bind="region"
-          class="region"
-          stroke="#acacac"
-          stroke-width="2"
-          stroke-miterlimit="10"
-        >
-          <title>{{region.name}}</title>
+    <div class="border border-slate-600 rounded-lg flex flex-row">
+      <div id="tooltip-default" role="tooltip" class="inline-block absolute invisible z-10 py-2 px-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip dark:bg-gray-700">
+          #{{hoveredRegion?.id}}
+          {{hoveredRegion?.nom}}
+      </div>
+      <svg baseprofile="tiny" fill="#7c7c7c" height="737" stroke="#ffffff" stroke-linecap="round"
+        stroke-linejoin="round" stroke-width="2" version="1.2" width="1000" viewbox="0 0 1000 737"
+        xmlns="http://www.w3.org/2000/svg">
+        <path v-for="region in map" :key="region.id" v-bind="region" class="region focus:outline-0" stroke="#acacac" stroke-width="2"
+          stroke-miterlimit="10" data-tooltip-target="tooltip-default">
+          <title>{{ region.name }}</title>
         </path>
         <circle cx="602.2" cy="515.6" id="0"></circle>
         <circle cx="168.9" cy="204.9" id="1"></circle>
         <circle cx="158.1" cy="210.6" id="2"></circle>
       </svg>
+    </div>
+    <div class="bg-slate-100 border border-slate-600 rounded-lg p-1">
+      <span v-if="!selectedRegion" class="text-orange-500">Séléctionnez une région pour avoir les résultats</span>
+      <pre v-else>{{ selectedRegion }}</pre>
     </div>
   </div>
 </template>
@@ -163,15 +182,19 @@ onMounted(async () => {
 
   gap: 5px;
 }
+
 path {
   &:hover {
     fill: #fff;
   }
+
   &.selected {
     fill: #fff !important;
   }
 }
+
 .region {
+  cursor: pointer;
   transition: all 200ms ease-in-out;
 }
 </style>

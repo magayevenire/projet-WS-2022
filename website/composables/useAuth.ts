@@ -1,5 +1,6 @@
 import { useRouter, useState } from "#app";
 import { IUser } from "~/types/IUser"
+import { LoginResponse } from "~~/types/LoginResponse";
 // const conf = useRuntimeConfig()
 // export const nuxtApp = () => useNuxtApp();
 const DJANGO_API_BASE = "http://localhost:8000/api"
@@ -76,7 +77,7 @@ export async function registerWithUsername(
   password: string
 ) {
   try {
-    const { data, error } = await useFetch(`${DJANGO_API_BASE}/auth/users/`, {
+    const { data, error } = await useFetch<IUser>(`${DJANGO_API_BASE}/auth/users/`, {
       method: "POST",
       body: { username, password },
     });
@@ -107,7 +108,7 @@ export async function loginWithEmail(email: string, password: string) {
 
 export async function loginWithUsername(username: string, password: string) {
   let authCookie = useAuthCookie()
-  const { auth_token } = await $fetch(
+  const { auth_token } = await $fetch<LoginResponse>(
     `${DJANGO_API_BASE}/auth/token/login/`,
     {
       method: "POST",
