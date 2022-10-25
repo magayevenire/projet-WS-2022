@@ -1,6 +1,7 @@
 from enum import unique
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import Avg, Count, Min, Sum
 
 
 # Create your models here.
@@ -47,12 +48,6 @@ class Candidature(models.Model):
     def votes(self):
         return self.vote.count()
 
-    @property
-    def pourcentage(self):
-      
-        print(self.election.candidats)
-        return "self.election.candidats.votes.count()"
-
     def __str__(self):
         return f"{self.nom_parti} -  {self.candidat.prenom} -  {self.candidat.nom}"
 
@@ -61,13 +56,13 @@ class Candidature(models.Model):
 
 class Vote(models.Model):
 
-    electeur = models.ForeignKey(Electeur,related_name='votes', on_delete=models.CASCADE)
+    electeur = models.ForeignKey(Electeur, on_delete=models.CASCADE)
     bureau_vote = models.ForeignKey("circonscriptions.Bureau",related_name='suffrages', on_delete=models.CASCADE)
     candidature = models.ForeignKey(Candidature,related_name='vote', on_delete=models.CASCADE)
     creation = models.DateTimeField(auto_now_add=True)
     modifier = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        unique_together = ('electeur', 'candidature')
+    # class Meta:
+    #     unique_together = ('electeur', 'candidature__election')
     def __str__(self):
-        return f"{self.canditaure}"
+        return f"{self.candidature}"

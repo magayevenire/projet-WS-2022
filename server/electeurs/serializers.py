@@ -27,12 +27,11 @@ class VoteSerializer(serializers.ModelSerializer):
 
 class ElecteurSerializer(serializers.ModelSerializer):
     # candidatures = CandidatureSerializer(many=True,read_only=True)
-    # votes = ElecteurVoteSerializer(many=True,read_only=True)
 
     class Meta:
         model = Electeur
-        fields = ("id","numero_cni",'user',"nom","prenom","date_naissance","adresse","bureau_vote","candidatures","votes")
-        read_only_fields =("candidatures","votes")
+        fields = ("id","numero_cni",'user',"nom","prenom","date_naissance","adresse","bureau_vote","candidatures",)
+        read_only_fields =("candidatures",)
 
 
 
