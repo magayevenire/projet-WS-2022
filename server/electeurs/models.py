@@ -20,6 +20,17 @@ class Electeur(models.Model):
     adresse = models.CharField(max_length=250,null=True,blank=True)
     # nom_centre_vote = models.CharField(max_length=50,null=True,blank=True)
     bureau_vote = models.ForeignKey("circonscriptions.Bureau",related_name='inscrits', on_delete=models.CASCADE)
+    @property
+    def elections(self):
+        votes= self.electeur_votes.values("candidature__election").distinct()
+        # elections
+        # print(dict(votes))
+        elections= []
+        for election in list(votes):
+            for k,v in election.items():
+                elections.append(v)
+                
+        return elections
 
     creation = models.DateTimeField(auto_now_add=True)
     modifier = models.DateTimeField(auto_now=True)
@@ -40,7 +51,9 @@ class Candidature(models.Model):
     candidat= models.ForeignKey(Electeur,related_name='candidatures', on_delete=models.CASCADE,null=True,blank=True)
     election= models.ForeignKey("elections.election",related_name='candidats',on_delete=models.CASCADE,null=True,blank=True)
     nom_parti = models.CharField(max_length=50,null=True,blank=True)
+    couleur = models.CharField(max_length=50,null=True,blank=True)
 
+    
     creation = models.DateTimeField(auto_now_add=True)
     modifier = models.DateTimeField(auto_now=True)
 
@@ -56,7 +69,7 @@ class Candidature(models.Model):
 
 class Vote(models.Model):
 
-    electeur = models.ForeignKey(Electeur, on_delete=models.CASCADE)
+    electeur = models.ForeignKey(Electeur,related_name='electeur_votes', on_delete=models.CASCADE)
     bureau_vote = models.ForeignKey("circonscriptions.Bureau",related_name='suffrages', on_delete=models.CASCADE)
     candidature = models.ForeignKey(Candidature,related_name='vote', on_delete=models.CASCADE)
     creation = models.DateTimeField(auto_now_add=True)

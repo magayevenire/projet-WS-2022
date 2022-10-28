@@ -20,15 +20,6 @@ class ElectionViewSet(viewsets.ModelViewSet):
     serializer_class =ElectionSerializer
     queryset = Election.objects.all()
 
-    @action(detail=False)
-    def region(self, request,pk=None):
-
-        # client = self.queryset.get(user=self.request.user.id)
-        serializer = self.get_serializer( self.queryset)
-
-        
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
     @action(detail=True)
@@ -41,7 +32,7 @@ class ElectionViewSet(viewsets.ModelViewSet):
             votes = Vote.objects.filter(bureau_vote=id,candidature__election=election)
             total = votes.count()
             candidatures = Candidature.objects.filter(election=election)
-            candidatures = candidatures.annotate(votes= Count('vote',filter=Q(vote__bureau_vote=id))).values()
+            candidatures = candidatures.annotate(votes= Count('vote',filter=Q(vote__bureau_vote=id))).order_by('-votes').values()
 
             # serialiser = CandidatureSerializer(candidatures, many=True)
             
@@ -59,7 +50,7 @@ class ElectionViewSet(viewsets.ModelViewSet):
             votes = Vote.objects.filter(bureau_vote__commune=id,candidature__election=election)
             total = votes.count()
             candidatures = Candidature.objects.filter(election=election)
-            candidatures = candidatures.annotate(votes= Count('vote',filter=Q(vote__bureau_vote__commune=id))).values()
+            candidatures = candidatures.annotate(votes= Count('vote',filter=Q(vote__bureau_vote__commune=id))).order_by('-votes').values()
             return Response({"total":total,"candidature":list(candidatures)}, status=status.HTTP_200_OK)
         else :
             return Response({}, status=status.HTTP_400_BAD_REQUEST)
@@ -74,7 +65,7 @@ class ElectionViewSet(viewsets.ModelViewSet):
             votes = Vote.objects.filter(bureau_vote__commune__departement=id,candidature__election=election)
             total = votes.count()
             candidatures = Candidature.objects.filter(election=election)
-            candidatures = candidatures.annotate(votes= Count('vote',filter=Q(vote__bureau_vote__commune__departement=id))).values()
+            candidatures = candidatures.annotate(votes= Count('vote',filter=Q(vote__bureau_vote__commune__departement=id))).order_by('-votes').values()
             return Response({"total":total,"candidature":list(candidatures)}, status=status.HTTP_200_OK)
         else :
             return Response({}, status=status.HTTP_400_BAD_REQUEST)
@@ -89,7 +80,7 @@ class ElectionViewSet(viewsets.ModelViewSet):
             votes = Vote.objects.filter(bureau_vote__commune__departement__region=id,candidature__election=election)
             total = votes.count()
             candidatures = Candidature.objects.filter(election=election)
-            candidatures = candidatures.annotate(votes= Count('vote',filter=Q(vote__bureau_vote__commune__departement__region=id))).values()
+            candidatures = candidatures.annotate(votes= Count('vote',filter=Q(vote__bureau_vote__commune__departement__region=id))).order_by('-votes').values()
             return Response({"total":total,"candidature":list(candidatures)}, status=status.HTTP_200_OK)
         else :
             return Response({}, status=status.HTTP_400_BAD_REQUEST)
@@ -101,7 +92,7 @@ class ElectionViewSet(viewsets.ModelViewSet):
         votes = Vote.objects.filter(candidature__election=election)
         total = votes.count()
         candidatures = Candidature.objects.filter(election=election)
-        candidatures = candidatures.annotate(votes= Count('vote')).values()
+        candidatures = candidatures.annotate(votes= Count('vote')).order_by('-votes').values()
         return Response({"total":total,"candidature":list(candidatures)}, status=status.HTTP_200_OK)
     
     # @action(detail=True)
