@@ -26,9 +26,40 @@ class UserViewSet(viewsets.ModelViewSet):
 class ElecteurViewSet(viewsets.ModelViewSet):
     serializer_class =ElecteurSerializer
     queryset = Electeur.objects.all()
+    # def create(self, request, *args, **kwargs):
+    #     serializer = self.get_serializer(data=request.data)
+    #     if serializer.is_valid():
+    #         self.perform_create(serializer)
+    #         headers = self.get_success_headers(serializer.data)
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    #     else:
+             
+    #         errors = [ f"{field} - {detail[0]}"  for field ,detail in serializer.errors.items()]
+        
+    #         return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
 class VoteViewSet(viewsets.ModelViewSet):
     serializer_class =VoteSerializer
     queryset = Vote.objects.all()
+
+    def create(self, request, *args, **kwargs):
+
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            print(request.data)
+            # election = Candidature.objects.get(pk=request.data['candidature']).election
+            # votes = Vote.objects.filter(electeur=self.request.user.id,candidature__election=election)
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        else:
+             
+            # errors = [ f"{field} - {detail[0]}"  for field ,detail in serializer.errors.items()]
+        
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class CandidatureViewSet(viewsets.ModelViewSet):
     serializer_class =CandidatureSerializer
     queryset = Candidature.objects.all()

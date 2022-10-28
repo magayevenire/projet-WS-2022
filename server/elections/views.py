@@ -20,15 +20,6 @@ class ElectionViewSet(viewsets.ModelViewSet):
     serializer_class =ElectionSerializer
     queryset = Election.objects.all()
 
-    @action(detail=False)
-    def region(self, request,pk=None):
-
-        # client = self.queryset.get(user=self.request.user.id)
-        serializer = self.get_serializer( self.queryset)
-
-        
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
     @action(detail=True)
