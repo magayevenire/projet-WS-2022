@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from .models import Electeur ,Vote ,Candidature 
+from elections.models import Election
 from .serializers import ElecteurSerializer ,CandidatureSerializer ,VoteSerializer,UserSerializer
 from django.contrib.auth.models import User
 from rest_framework.decorators import action
@@ -49,8 +50,12 @@ class VoteViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
-            print(request.data)
-            # election = Candidature.objects.get(pk=request.data['candidature']).election
+            elections = Electeur.objects.get(user=request.user.id).elections
+            election = Candidature.objects.get(pk=request.data['candidature']).election.pk
+            if (elections and  election and (election in elections)) :
+                return Response({}, status=status.HTTP_400_BAD_REQUEST)
+                
+
             # votes = Vote.objects.filter(electeur=self.request.user.id,candidature__election=election)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
