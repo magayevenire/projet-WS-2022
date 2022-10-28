@@ -1,4 +1,3 @@
-export interface IRegion {
-  id: number;
-  nom: string;
-}
+import { ICirconscription } from "./ICirconscription";
+
+export interface IRegion extends ICirconscription {}

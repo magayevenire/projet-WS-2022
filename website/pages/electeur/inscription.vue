@@ -58,6 +58,7 @@
         <div>
           <label for="region" class="sr-only">Région</label>
           <select
+            class="w-full"
             v-model="selectedRegion"
             id="region"
             name="region"
@@ -71,6 +72,7 @@
         <div v-if="departements && departements.length > 0">
           <label for="department" class="sr-only">Département</label>
           <select
+            class="w-full"
             v-model="selectedDepartement"
             id="department"
             name="department"
@@ -84,6 +86,7 @@
         <div v-if="communes && communes.length > 0">
           <label for="communes" class="sr-only">Commune</label>
           <select
+            class="w-full"
             v-model="selectedCommune"
             id="communes"
             name="communes"
@@ -97,6 +100,7 @@
         <div v-if="bureaux && bureaux.length > 0">
           <label for="bureaux" class="sr-only">Bureau</label>
           <select
+            class="w-full"
             v-model="selectedBureau"
             id="bureaux"
             name="bureaux"
@@ -109,7 +113,7 @@
         </div>
       </div>
       <div>
-        <button>
+        <button class="button-primary">
           S'inscrir
         </button>
       </div>
@@ -120,6 +124,7 @@
 <script lang="ts" setup>
 import { IUser } from '~/types/IUser'
 import { IElecteur } from '~/types/IElecteur'
+import { toast, snackbar } from 'tailwind-toast'
 
 const conf = useRuntimeConfig()
 
@@ -130,7 +135,6 @@ const bureaux = ref([])
 const { data } = await useAsyncData('region', ()=> $fetch<[]>(`${conf.public.DJANGO_API_BASE}/region/`))
 regions.value = data.value
 const user = useState<IUser>('user')
-console.log('--- electeur/inscription@regions', regions)
 
 
 const selectedRegion = ref(null)
@@ -177,11 +181,32 @@ async function handleBureauChange(){
 const electeur = ref<IElecteur>({ user: user.value.id });
 
 async function handleSubmit() {
-  console.log(`electeur/inscription#handleSubmit@electeur`, electeur.value, user.value);
-  const { data } = await useFetch<IElecteur>(`${conf.public.DJANGO_API_BASE}/electeur/`, {
-    method: "post",
-    body: Object.assign(electeur.value, { user: user.value.id })
-  })
-  console.log(`electeur/inscription#handleSubmit@data`, data.value);
+  try {
+    console.log(`electeur/inscription#handleSubmit@electeur`, electeur.value, user.value);
+    const data = await $fetch<IElecteur>(`${conf.public.DJANGO_API_BASE}/electeur/`, {
+      method: "post",
+      body: Object.assign(electeur.value, { user: user.value.id })
+    })
+    console.log(`electeur/inscription#handleSubmit@data`, data);
+    toast()
+    .default('Bien!', 'Vous êtes inscrit sur la liste électorale')
+    .with({
+      duration: 5000,
+      positionX: 'end',
+      positionY: 'top',
+      color: 'bg-green-300 rounded-lg m-1 text-white',
+    }).show()
+    useRouter().push('/')
+  } catch (error) {
+    console.error(error);
+    toast()
+    .default('Erreur', JSON.stringify(error.data))
+    .with({
+      duration: 5000,
+      positionX: 'end',
+      positionY: 'top',
+      color: 'bg-red-300 rounded-lg m-1 text-white',
+    }).show()
+  }
 }
 </script>

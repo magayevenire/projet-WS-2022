@@ -8,4 +8,6 @@ export interface IElection {
   jour_vote?: string
   creation?: string
   modifier?: string
+
+  candidats? : any[]
 }

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { IRegion } from "~~/types/IRegion"
+import { IElection } from '~/types/IElection'
 const conf = useRuntimeConfig()
 const map = [
   {
@@ -88,8 +89,19 @@ const map = [
   },
 ];
 
+function getRandomColor(): string{
+  const randomColor = Math.floor(Math.random()*16777215).toString(16);
+  return "#" + randomColor;
+}
 
-let selectedRegion = ref<IRegion>(null)
+
+const elections = ref<IElection[]>([])
+const selectedElection = ref<number>(null)
+const { data } = await useFetch<IElection[]>(`${useRuntimeConfig().public.DJANGO_API_BASE}/election/`);
+
+elections.value = data.value
+if (elections.value && elections.value.length != 0) selectedElection.value = elections.value[0].id
+
 let regions = ref<IRegion[]>([])
 // lifecycle hooks
 onMounted(async () => {
@@ -115,20 +127,38 @@ onMounted(async () => {
       handleRegionClick(this)
     })
 
-    region.addEventListener('mouseover', function(e){
+    region.addEventListener('mouseover', function (e) {
       handleRegionHover(this)
     })
   }
 });
 
 const hoveredRegion = ref<IRegion>(null)
-function handleRegionHover(region: HTMLElement) {
+const hoveredRegionInfos = ref({
+  total: 0,
+  candidature: []
+})
+async function handleRegionHover(region: HTMLElement) {
   hoveredRegion.value = regions.value.find(reg => reg.nom == region.dataset.regionName)
+  const { total, candidature } = await $fetch<any>(`${conf.public.DJANGO_API_BASE}/election/${selectedElection.value}/region/?id=${hoveredRegion.value.id}`)
+
+  hoveredRegionInfos.value.total = total
+  hoveredRegionInfos.value.candidature = candidature
+
+  console.log('hoveredRegionInfos:', hoveredRegionInfos)
 }
 
-function handleRegionClick(region: HTMLElement) {
-  selectedRegion.value = regions.value.find(reg => reg.nom == region.dataset.regionName)
-  console.log('clicked on:', regions, selectedRegion)
+let selectedRegion = ref<IRegion>(null)
+let selectedRegionInfos = ref({
+  total: 0,
+  candidature: []
+})
+async function handleRegionClick(region: HTMLElement) {
+  const res = regions.value.find(reg => reg.nom == region.dataset.regionName)
+  const result = await $fetch<any>(`${conf.public.DJANGO_API_BASE}/election/${selectedElection.value}/region/?id=${res.id}`)
+  selectedRegion.value = res
+  selectedRegionInfos.value = result
+  console.log('clicked on:', result)
 }
 </script>
 
@@ -147,26 +177,56 @@ function handleRegionClick(region: HTMLElement) {
       </aside>
     </main>
 
+
+    <div class="w-full">
+      <label for="election" class="text-lg font-bold">Choisir une election</label>
+      <select v-model="selectedElection" name="election" id="election" class="w-full">
+        <option v-for="election in elections" :key="election.id" :value="election.id">{{ election.nom }} -
+          {{ election.jour_vote }}</option>
+      </select>
+    </div>
     <div class="border border-slate-600 rounded-lg flex flex-row">
-      <div id="tooltip-default" role="tooltip" class="inline-block absolute invisible z-10 py-2 px-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip dark:bg-gray-700">
-          #{{hoveredRegion?.id}}
-          {{hoveredRegion?.nom}}
+      <div id="tooltip-default" role="tooltip"
+        class="inline-flex flex-col absolute invisible z-10 py-2 px-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip dark:bg-gray-700">
+        <div>
+          <small class="text-gray-400">#{{ hoveredRegion?.id }}</small>
+          <span class="text-lg font-bold">{{ hoveredRegion?.nom }}</span>
+        </div>
+        <div>
+          <h3>{{ hoveredRegionInfos.total }} vote(s) au total</h3>
+          <ol class="list-inside">
+            <li v-for="candid in hoveredRegionInfos.candidature" :key="candid.id">
+              <span class="text-gray-400">{{ candid.nom_parti }}:</span> <b>{{ candid.votes }} vote(s)</b>
+            </li>
+          </ol>
+        </div>
       </div>
       <svg baseprofile="tiny" fill="#7c7c7c" height="737" stroke="#ffffff" stroke-linecap="round"
         stroke-linejoin="round" stroke-width="2" version="1.2" width="1000" viewbox="0 0 1000 737"
         xmlns="http://www.w3.org/2000/svg">
-        <path v-for="region in map" :key="region.id" v-bind="region" class="region focus:outline-0" stroke="#acacac" stroke-width="2"
-          stroke-miterlimit="10" data-tooltip-target="tooltip-default">
+        <path v-for="(region, index) in map" :key="region.id" v-bind="region" class="region focus:outline-0" stroke="#acacac"
+          stroke-width="2" stroke-miterlimit="10" data-tooltip-target="tooltip-default" :id="`p${index}`">
           <title>{{ region.name }}</title>
         </path>
-        <circle cx="602.2" cy="515.6" id="0"></circle>
+        <!-- <circle cx="602.2" cy="515.6" id="0"></circle>
         <circle cx="168.9" cy="204.9" id="1"></circle>
-        <circle cx="158.1" cy="210.6" id="2"></circle>
+        <circle cx="158.1" cy="210.6" id="2"></circle> -->
       </svg>
     </div>
     <div class="bg-slate-100 border border-slate-600 rounded-lg p-1">
       <span v-if="!selectedRegion" class="text-orange-500">Séléctionnez une région pour avoir les résultats</span>
-      <pre v-else>{{ selectedRegion }}</pre>
+      <div v-else>
+        <small class="text-gray-400">#{{ selectedRegion?.id }}</small>
+        <span class="text-lg font-bold">{{ selectedRegion?.nom }}</span>
+      </div>
+      <div>
+        <h3>{{ selectedRegionInfos.total }} vote(s) au total</h3>
+        <ol class="list-inside">
+          <li v-for="candid in selectedRegionInfos.candidature" :key="candid.id">
+            <span class="text-gray-400">{{ candid.nom_parti }}:</span> <b>{{ candid.votes }} vote(s)</b>
+          </li>
+        </ol>
+      </div>
     </div>
   </div>
 </template>

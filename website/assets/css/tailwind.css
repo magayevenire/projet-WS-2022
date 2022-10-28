@@ -58,7 +58,7 @@
     @apply block py-1 px-3 hover:no-underline text-white rounded bg-gray-700 hover:bg-gray-900 hover:text-gray-50 dark:text-white m-1 hover:scale-105 duration-75;
   }
   .button-primary {
-    @apply w-full my-1 bg-blue-500 hover:bg-blue-600 text-white border-blue-300;
+    @apply w-full my-1 bg-blue-500 hover:bg-blue-600 text-white border-blue-300 disabled:bg-blue-400;
   }
 }
 

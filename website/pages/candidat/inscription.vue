@@ -4,16 +4,6 @@
     <form @submit.prevent="handleSubmit" class="mt-8 space-y-6">
       <input type="hidden" name="remember" value="true" />
       <div class="rounded-md shadow-sm -space-y-px mb-1 flex flex-col gap-2">
-        <!-- <div>
-          <label for="identification" class="sr-only">Identification</label>
-          <input
-            v-model="candidat.identification"
-            id="identification"
-            name="identification"
-            required
-            placeholder="Identification"
-          />
-        </div> -->
         <div>
           <label for="partiName" class="sr-only">Nom de parti</label>
           <input
@@ -26,7 +16,8 @@
         </div>
         <div>
           <label for="elections" class="sr-only">election</label>
-          <select name="elections" v-model="selectedElection">
+          <select name="elections" v-model="selectedElection" class="w-full">
+            <option :value="null" disabled>Choisir une éléction</option>
             <option
               v-for="election in elections"
               :key="election.id"
@@ -36,7 +27,7 @@
             </option>
           </select>
         </div>
-        <button>S'inscrir</button>
+        <button class="button-primary" >S'inscrir</button>
       </div>
     </form>
   </div>
@@ -46,6 +37,7 @@ import { IUser } from "~/types/IUser";
 import { IElecteur } from "~/types/IElecteur";
 import { IElection } from "~/types/IElection";
 import { ICandidature } from "~/types/ICandidature";
+import { toast, snackbar } from 'tailwind-toast'
 
 const conf = useRuntimeConfig();
 const user = useState<IUser>("user");
@@ -71,16 +63,37 @@ onMounted(async () => {
 });
 
 async function handleSubmit() {
-  candidature.value.candidat = user.value.id;
-  candidature.value.election = selectedElection.value;
-  console.log(
-    `candidat/inscription#handleSubmit@candidature`,
-    candidature.value,
-    user.value
-  );
-  const data = await useFetch(`${conf.public.DJANGO_API_BASE}/candidature/`, {
-    method: "post",
-    body: candidature.value,
-  });
+  try {
+    candidature.value.candidat = user.value?.electeur?.id;
+    candidature.value.election = selectedElection.value;
+    console.log(
+      `candidat/inscription#handleSubmit@candidature`,
+      candidature.value,
+      user.value
+    );
+    const data = await $fetch(`${conf.public.DJANGO_API_BASE}/candidature/`, {
+      method: "post",
+      body: candidature.value,
+    });
+    toast()
+    .default('Bien!', 'Votre candidature à bien été crée')
+    .with({
+      duration: 5000,
+      positionX: 'end',
+      positionY: 'top',
+      color: 'bg-green-300 rounded-lg m-1 text-white',
+    }).show()
+    useRouter().push("/")
+  } catch (error) {
+    console.error("erreur durant l'ajout de candidature", error);
+    toast()
+    .default('Erreur!', JSON.stringify(error.data))
+    .with({
+      duration: 5000,
+      positionX: 'end',
+      positionY: 'top',
+      color: 'bg-red-300 rounded-lg m-1 text-white',
+    }).show()
+  }
 }
 </script>
