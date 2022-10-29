@@ -124,7 +124,6 @@
 <script lang="ts" setup>
 import { IUser } from '~/types/IUser'
 import { IElecteur } from '~/types/IElecteur'
-import { toast, snackbar } from 'tailwind-toast'
 
 const conf = useRuntimeConfig()
 
@@ -188,25 +187,9 @@ async function handleSubmit() {
       body: Object.assign(electeur.value, { user: user.value.id })
     })
     console.log(`electeur/inscription#handleSubmit@data`, data);
-    toast()
-    .default('Bien!', 'Vous êtes inscrit sur la liste électorale')
-    .with({
-      duration: 5000,
-      positionX: 'end',
-      positionY: 'top',
-      color: 'bg-green-300 rounded-lg m-1 text-white',
-    }).show()
     useRouter().push('/')
   } catch (error) {
     console.error(error);
-    toast()
-    .default('Erreur', JSON.stringify(error.data))
-    .with({
-      duration: 5000,
-      positionX: 'end',
-      positionY: 'top',
-      color: 'bg-red-300 rounded-lg m-1 text-white',
-    }).show()
   }
 }
 </script>

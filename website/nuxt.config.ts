@@ -29,4 +29,7 @@ export default defineNuxtConfig({
       DJANGO_API_BASE: "http://localhost:8000/api",
     },
   },
+  plugins: [
+    "~/plugins/sweetalert2.ts"
+  ]
 });

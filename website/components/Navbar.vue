@@ -84,7 +84,7 @@
                 dark:border-gray-700
 
                 hover:no-underline
-              " aria-current="page" :class="$route.path == '/' ? 'bg-blue-700 md:text-blue-700 md:bg-inherit md:font-bold' : ''">Accueil</NuxtLink>
+              " aria-current="page" :class="$route.path == '/' ? 'bg-blue-700 md:text-blue-700 md:bg-inherit md:font-bold text-white' : ''">Accueil</NuxtLink>
           </li>
           <li>
             <NuxtLink to="/service" class="

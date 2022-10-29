@@ -100,7 +100,7 @@ const selectedElectionId = ref<number>(null)
 const selectedElection = ref<IElection>(null)
 watch(selectedElectionId, async (newE, oldE) => {
   console.log('index#watch@r', oldE, newE)
-  if(!newE) return;
+  if (!newE) return;
   selectedElection.value = await $fetch<IElection>(`${conf.public.DJANGO_API_BASE}/election/${selectedElectionId.value}`);
   selectedElection.value.regions = []
   for await (const region of regions.value) {
@@ -170,9 +170,9 @@ async function handleRegionClick(region: HTMLElement) {
   selectedRegionInfos.value = result
 }
 
-function getRegionColor(nom: string){
+function getRegionColor(nom: string) {
   const r = selectedElection.value?.regions?.find(reg => reg.nom == nom)
-  const color = r?.parti_leader.couleur
+  const color = r?.parti_leader?.couleur
   // console.log('---', nom, r, color)
   return color ? `#${color}` : 'inherit'
 }
@@ -180,14 +180,15 @@ function getRegionColor(nom: string){
 async function getElectionRegionData(region: IRegion) {
   const { total, candidature } = await $fetch<any>(`${conf.public.DJANGO_API_BASE}/election/${selectedElectionId.value}/region/?id=${region.id}`)
   const topVotes = Math.max(...candidature.map(can => can.votes))
-  const parti_leader = candidature.find(can => can.votes == topVotes)
+  const parties = candidature.filter(can => can.votes == topVotes)
+  const parti_leader = parties && parties.length == 1 ? parties[0] : null
   const res = {
     ...region,
     parti_leader,
     total,
     candidature
   }
-  // console.log('fffffffffff', res)
+  console.log('fffffffffff', res)
   return res
 }
 </script>
@@ -206,7 +207,6 @@ async function getElectionRegionData(region: IRegion) {
         </ContentDoc>
       </aside>
     </main>
-
 
     <div class="w-full">
       <label for="election" class="text-lg font-bold">Choisir une election</label>

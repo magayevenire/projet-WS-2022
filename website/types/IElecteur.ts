@@ -3,6 +3,7 @@ export interface IElecteur {
   adresse?: string;
   bureau_vote?: number;
   candidatures?: [];
+  elections?: number[];
   date_naissance?: string;
   nom?: string;
   numero_cni?: string;

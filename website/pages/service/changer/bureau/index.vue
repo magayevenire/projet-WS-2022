@@ -2,7 +2,6 @@
 import { IElecteur } from '~~/types/IElecteur';
 import { IUser } from '~~/types/IUser';
 import { IBureau } from '~~/types/IBureau';
-import { toast, snackbar } from 'tailwind-toast'
 
 
 const conf = useRuntimeConfig()
@@ -70,14 +69,7 @@ async function handleSubmit() {
     console.error(error.value)
     return 0
   }
-  toast()
-    .default('Bien!', 'Votre bureau à été mit à jour')
-    .with({
-      duration: 5000,
-      positionX: 'end',
-      positionY: 'top',
-      color: 'bg-green-300 rounded-lg m-1 text-white',
-    }).show()
+
   router.push("/")
 }
 
@@ -136,7 +128,8 @@ onMounted(() => { })
     </template>
 
     <div v-else class="bg-red-500 p-2 rounded-lg shadow-lg">
-      <span class="text-white">Vous n'êtes pas inscrit sur la liste éléctorale allez <NuxtLink to="/electeur/inscription">ICI</NuxtLink> pour vous inscrir</span>
+      <span class="text-white">Vous n'êtes pas inscrit sur la liste éléctorale allez <NuxtLink
+          to="/electeur/inscription">ICI</NuxtLink> pour vous inscrir</span>
     </div>
   </div>
 </template>

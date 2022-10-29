@@ -37,7 +37,6 @@ import { IUser } from "~/types/IUser";
 import { IElecteur } from "~/types/IElecteur";
 import { IElection } from "~/types/IElection";
 import { ICandidature } from "~/types/ICandidature";
-import { toast, snackbar } from 'tailwind-toast'
 
 const conf = useRuntimeConfig();
 const user = useState<IUser>("user");
@@ -75,25 +74,9 @@ async function handleSubmit() {
       method: "post",
       body: candidature.value,
     });
-    toast()
-    .default('Bien!', 'Votre candidature à bien été crée')
-    .with({
-      duration: 5000,
-      positionX: 'end',
-      positionY: 'top',
-      color: 'bg-green-300 rounded-lg m-1 text-white',
-    }).show()
     useRouter().push("/")
   } catch (error) {
     console.error("erreur durant l'ajout de candidature", error);
-    toast()
-    .default('Erreur!', JSON.stringify(error.data))
-    .with({
-      duration: 5000,
-      positionX: 'end',
-      positionY: 'top',
-      color: 'bg-red-300 rounded-lg m-1 text-white',
-    }).show()
   }
 }
 </script>
