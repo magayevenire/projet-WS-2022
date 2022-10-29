@@ -48,15 +48,12 @@ class VoteViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
-            self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             elections = Electeur.objects.get(user=request.user.id).elections
             election = Candidature.objects.get(pk=request.data['candidature']).election.pk
             if (elections and  election and (election in elections)) :
-                return Response({}, status=status.HTTP_400_BAD_REQUEST)
-                
-
-            # votes = Vote.objects.filter(electeur=self.request.user.id,candidature__election=election)
+                return Response({"already vote"}, status=status.HTTP_400_BAD_REQUEST)
+            self.perform_create(serializer)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         else:
