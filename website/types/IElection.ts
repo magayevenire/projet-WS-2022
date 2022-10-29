@@ -10,4 +10,5 @@ export interface IElection {
   modifier?: string
 
   candidats? : any[]
+  regions? : any[]
 }

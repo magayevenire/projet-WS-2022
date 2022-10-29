@@ -89,18 +89,28 @@ const map = [
   },
 ];
 
-function getRandomColor(): string{
-  const randomColor = Math.floor(Math.random()*16777215).toString(16);
+function getRandomColor(): string {
+  const randomColor = Math.floor(Math.random() * 16777215).toString(16);
   return "#" + randomColor;
 }
 
 
 const elections = ref<IElection[]>([])
-const selectedElection = ref<number>(null)
-const { data } = await useFetch<IElection[]>(`${useRuntimeConfig().public.DJANGO_API_BASE}/election/`);
+const selectedElectionId = ref<number>(null)
+const selectedElection = ref<IElection>(null)
+watch(selectedElectionId, async (newE, oldE) => {
+  console.log('index#watch@r', oldE, newE)
+  if(!newE) return;
+  selectedElection.value = await $fetch<IElection>(`${conf.public.DJANGO_API_BASE}/election/${selectedElectionId.value}`);
+  selectedElection.value.regions = []
+  for await (const region of regions.value) {
+    const r = await getElectionRegionData(region)
+    selectedElection.value.regions.push(r)
+  }
+})
+const { data } = await useFetch<IElection[]>(`${conf.public.DJANGO_API_BASE}/election/`);
 
 elections.value = data.value
-if (elections.value && elections.value.length != 0) selectedElection.value = elections.value[0].id
 
 let regions = ref<IRegion[]>([])
 // lifecycle hooks
@@ -131,6 +141,8 @@ onMounted(async () => {
       handleRegionHover(this)
     })
   }
+
+  if (elections.value && elections.value.length != 0) selectedElectionId.value = elections.value[0].id
 });
 
 const hoveredRegion = ref<IRegion>(null)
@@ -140,12 +152,10 @@ const hoveredRegionInfos = ref({
 })
 async function handleRegionHover(region: HTMLElement) {
   hoveredRegion.value = regions.value.find(reg => reg.nom == region.dataset.regionName)
-  const { total, candidature } = await $fetch<any>(`${conf.public.DJANGO_API_BASE}/election/${selectedElection.value}/region/?id=${hoveredRegion.value.id}`)
+  const { total, candidature } = await $fetch<any>(`${conf.public.DJANGO_API_BASE}/election/${selectedElectionId.value}/region/?id=${hoveredRegion.value.id}`)
 
   hoveredRegionInfos.value.total = total
   hoveredRegionInfos.value.candidature = candidature
-
-  console.log('hoveredRegionInfos:', hoveredRegionInfos)
 }
 
 let selectedRegion = ref<IRegion>(null)
@@ -155,10 +165,30 @@ let selectedRegionInfos = ref({
 })
 async function handleRegionClick(region: HTMLElement) {
   const res = regions.value.find(reg => reg.nom == region.dataset.regionName)
-  const result = await $fetch<any>(`${conf.public.DJANGO_API_BASE}/election/${selectedElection.value}/region/?id=${res.id}`)
+  const result = await $fetch<any>(`${conf.public.DJANGO_API_BASE}/election/${selectedElectionId.value}/region/?id=${res.id}`)
   selectedRegion.value = res
   selectedRegionInfos.value = result
-  console.log('clicked on:', result)
+}
+
+function getRegionColor(nom: string){
+  const r = selectedElection.value?.regions?.find(reg => reg.nom == nom)
+  const color = r?.parti_leader.couleur
+  // console.log('---', nom, r, color)
+  return color ? `#${color}` : 'inherit'
+}
+
+async function getElectionRegionData(region: IRegion) {
+  const { total, candidature } = await $fetch<any>(`${conf.public.DJANGO_API_BASE}/election/${selectedElectionId.value}/region/?id=${region.id}`)
+  const topVotes = Math.max(...candidature.map(can => can.votes))
+  const parti_leader = candidature.find(can => can.votes == topVotes)
+  const res = {
+    ...region,
+    parti_leader,
+    total,
+    candidature
+  }
+  // console.log('fffffffffff', res)
+  return res
 }
 </script>
 
@@ -180,7 +210,8 @@ async function handleRegionClick(region: HTMLElement) {
 
     <div class="w-full">
       <label for="election" class="text-lg font-bold">Choisir une election</label>
-      <select v-model="selectedElection" name="election" id="election" class="w-full">
+      <select v-model="selectedElectionId" name="election" id="election" class="w-full">
+        <option value="null" disabled>Selectionner une election</option>
         <option v-for="election in elections" :key="election.id" :value="election.id">{{ election.nom }} -
           {{ election.jour_vote }}</option>
       </select>
@@ -204,8 +235,9 @@ async function handleRegionClick(region: HTMLElement) {
       <svg baseprofile="tiny" fill="#7c7c7c" height="737" stroke="#ffffff" stroke-linecap="round"
         stroke-linejoin="round" stroke-width="2" version="1.2" width="1000" viewbox="0 0 1000 737"
         xmlns="http://www.w3.org/2000/svg">
-        <path v-for="(region, index) in map" :key="region.id" v-bind="region" class="region focus:outline-0" stroke="#acacac"
-          stroke-width="2" stroke-miterlimit="10" data-tooltip-target="tooltip-default" :id="`p${index}`">
+        <path v-for="(region, index) in map" :key="region.id" v-bind="region" class="region focus:outline-0"
+          stroke="#acacac" stroke-width="2" stroke-miterlimit="10" :fill="getRegionColor(region['data-region-name'])"
+          data-tooltip-target="tooltip-default" :id="`p${index}`">
           <title>{{ region.name }}</title>
         </path>
         <!-- <circle cx="602.2" cy="515.6" id="0"></circle>
